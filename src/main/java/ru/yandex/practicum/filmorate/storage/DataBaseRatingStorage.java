@@ -20,9 +20,9 @@ public class DataBaseRatingStorage implements RatingStorage {
 
     @Override
     public Optional<Rating> findById(Integer id) {
-        final String SELECT_QUERY = "SELECT FILM_ID, RATING_NAME FROM RATING_MPA WHERE FILM_ID = :filmId";
+        final String SELECT_QUERY = "SELECT RATING_ID, RATING_NAME FROM RATING_MPA WHERE RATING_ID = :ratingId";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("filmId", id);
+        parameters.addValue("ratingId", id);
 
         try {
             return Optional.ofNullable(jdbc.queryForObject(SELECT_QUERY, parameters, new RatingMapper()));
@@ -33,7 +33,7 @@ public class DataBaseRatingStorage implements RatingStorage {
 
     @Override
     public Collection<Rating> getRatingList() {
-        final String SELECT_QUERY = "SELECT FILM_ID, RATING_NAME FROM RATING_MPA";
+        final String SELECT_QUERY = "SELECT * FROM RATING_MPA";
         return jdbc.query(SELECT_QUERY, new RatingMapper());
     }
 
@@ -51,9 +51,9 @@ public class DataBaseRatingStorage implements RatingStorage {
 
     @Override
     public Rating update(Rating rating) {
-        final String UPDATE_RATING_QUERY = "UPDATE RATING_MPA SET RATING_NAME = :ratingName WHERE FILM_ID = :filmId";
+        final String UPDATE_RATING_QUERY = "UPDATE RATING_MPA SET RATING_NAME = :ratingName WHERE RATING_ID = :ratingId";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("filmId", rating.getId());
+        parameters.addValue("ratingId", rating.getId());
         parameters.addValue("ratingName", rating.getName());
 
         jdbc.update(UPDATE_RATING_QUERY, parameters);
@@ -62,24 +62,10 @@ public class DataBaseRatingStorage implements RatingStorage {
 
     @Override
     public void delete(Rating rating) {
-        final String DELETE_RATING_QUERY = "DELETE FROM RATING_MPA WHERE FILM_ID = :filmId";
+        final String DELETE_RATING_QUERY = "DELETE FROM RATING_MPA WHERE RATING_ID = :ratingId";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("filmId", rating.getId());
+        parameters.addValue("ratingId", rating.getId());
 
         jdbc.update(DELETE_RATING_QUERY, parameters);
     }
-
-    @Override
-    public Rating getRatingById(int id) {
-        String sql = "SELECT FILM_ID, RATING_NAME FROM RATING_MPA WHERE FILM_ID = :filmId";
-        MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("filmId", id);
-
-        try {
-            return jdbc.queryForObject(sql, parameters, new RatingMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null; // or handle it according to your application's logic
-        }
-    }
-
 }

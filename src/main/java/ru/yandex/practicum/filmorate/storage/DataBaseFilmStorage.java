@@ -1,26 +1,24 @@
 package ru.yandex.practicum.filmorate.storage;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmMapper;
 
 import java.sql.PreparedStatement;
 import java.util.List;
 
-@Component
+@Repository
+@RequiredArgsConstructor
 public class DataBaseFilmStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public DataBaseFilmStorage(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
     @Override
     public Film addFilm(Film film) {
-        String sql = "INSERT INTO films (name, description, release_date, duration, rating_id) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO films (film_name, description, release_date, duration, genre) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
@@ -28,7 +26,7 @@ public class DataBaseFilmStorage implements FilmStorage {
             ps.setString(2, film.getDescription());
             ps.setDate(3, java.sql.Date.valueOf(film.getReleaseDate()));
             ps.setInt(4, (int) film.getDuration().toMinutes());
-            ps.setInt(5, film.getRatingId());
+            ps.setString(5, film.getGenre());
             return ps;
         }, keyHolder);
         film.setId(keyHolder.getKey().intValue());
@@ -37,9 +35,9 @@ public class DataBaseFilmStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        String sql = "UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, rating_id = ? WHERE id = ?";
+        String sql = "UPDATE films SET film_name = ?, description = ?, release_date = ?, duration = ?, genre = ? WHERE id = ?";
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), java.sql.Date.valueOf(film.getReleaseDate()),
-                (int) film.getDuration().toMinutes(), film.getRatingId(), film.getId());
+                (int) film.getDuration().toMinutes(), film.getGenre(), film.getId());
         return getFilmById(film.getId());
     }
 

@@ -1,17 +1,17 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserDbService {
-    @Qualifier("DataBaseUserStorage")
+
     private final UserStorage userStorage;
 
     public User addUser(User user) {

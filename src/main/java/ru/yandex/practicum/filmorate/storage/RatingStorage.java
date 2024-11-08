@@ -15,6 +15,4 @@ public interface RatingStorage {
     void delete(Rating rating);
 
     Rating update(Rating rating);
-
-    Rating getRatingById(int id);
 }

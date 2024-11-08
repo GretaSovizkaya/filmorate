@@ -24,13 +24,8 @@ public class RatingController {
     }
 
     @GetMapping("{id}")
-    public Rating findMpa(@PathVariable int id) {
+    public Rating findRating(@PathVariable int id) {
         return ratingService.findById(id);
     }
 
-    @GetMapping("/mpa/{id}")
-    public Rating getRatingById(@PathVariable int id) {
-        log.info("Запрос на получение рейтинга по id: {}", id);
-        return ratingService.getRatingById(id);
-    }
 }
