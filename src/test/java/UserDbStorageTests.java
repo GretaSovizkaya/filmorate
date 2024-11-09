@@ -28,8 +28,7 @@ class UserDbStorageTests {
     @Test
     public void checkCreateNewUserAndGetById() {
 
-        User user = new User(3, "Roman", "email@mail.ru", "login12"
-                , LocalDate.now());
+        User user = new User(3, "Roman", "email@mail.ru", "login12", LocalDate.now());
 
         userDbStorage.addUser(user);
 
@@ -44,8 +43,7 @@ class UserDbStorageTests {
     @Test
     public void checkGetAllUsers() {
 
-        User user = new User(3, "Roma", "email@mail.ru", "login12"
-                , LocalDate.now());
+        User user = new User(3, "Roma", "email@mail.ru", "login12", LocalDate.now());
 
         userDbStorage.addUser(user);
 
@@ -59,8 +57,7 @@ class UserDbStorageTests {
     @Test
     public void updateUserAndGetById() {
 
-        User user = new User(1, "roma", "email@mail.ru", "login12"
-                , LocalDate.now());
+        User user = new User(1, "roma", "email@mail.ru", "login12", LocalDate.now());
         userDbStorage.addUser(user);
 
         user.setName("Rita");
@@ -92,12 +89,10 @@ class UserDbStorageTests {
     @Test
     public void compareUsers() {
 
-        User user = new User(1, "Roma", "email@mail.ru", "login12"
-                , LocalDate.now());
+        User user = new User(1, "Roma", "email@mail.ru", "login12", LocalDate.now());
 
 
-        User user1 = new User(1, "Roma", "email@mail.ru", "login12"
-                , LocalDate.now());
+        User user1 = new User(1, "Roma", "email@mail.ru", "login12", LocalDate.now());
         Assertions.assertEquals(user1, user);
 
     }
