@@ -27,18 +27,22 @@ class UserDbStorageTests {
 
     @Test
     public void checkCreateNewUserAndGetById() {
+        User user = new User(0, "Roman", "email@mail.ru", "login12", LocalDate.now());
 
-        User user = new User(3, "Roman", "email@mail.ru", "login12", LocalDate.now());
+        User savedUser = userDbStorage.addUser(user);
 
-        userDbStorage.addUser(user);
+        User retrievedUser = userDbStorage.getUserById(savedUser.getId());
 
-        User user1 = userDbStorage.getUserById(user.getId());
+        assertThat(retrievedUser)
+                .hasFieldOrPropertyWithValue("id", savedUser.getId())
+                .hasFieldOrPropertyWithValue("name", "Roman")
+                .hasFieldOrPropertyWithValue("email", "email@mail.ru")
+                .hasFieldOrPropertyWithValue("login", "login12");
 
-        assertThat(user1).hasFieldOrPropertyWithValue("id", 3);
-
-        userDbStorage.deleteUser(user.getId());
-
+        // Clean up by deleting the user
+        userDbStorage.deleteUser(savedUser.getId());
     }
+
 
     @Test
     public void checkGetAllUsers() {

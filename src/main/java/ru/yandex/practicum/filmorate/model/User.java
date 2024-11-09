@@ -14,14 +14,14 @@ public class User {
 
     private int id;
 
+    private String name;
+
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email should be valid")
     private String email;
 
     @NotBlank(message = "Login cannot be empty")
     private String login;
-
-    private String name;
 
     @NonNull
     @PastOrPresent(message = "Birthday cannot be in the future")
