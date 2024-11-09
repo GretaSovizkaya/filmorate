@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
+
 @Component
 public class FilmMapper implements RowMapper<Film> {
     @Override

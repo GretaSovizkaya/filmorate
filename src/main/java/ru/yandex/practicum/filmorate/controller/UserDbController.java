@@ -17,7 +17,7 @@ public class UserDbController {
     private final UserDbService userService;
 
     @PostMapping
-    public User addUser(@Valid @RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         log.info("Добавление нового пользователя: {}", user);
         return userService.addUser(user);
     }

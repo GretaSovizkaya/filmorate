@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.mappers.UserMapper;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -18,62 +20,69 @@ public class DataBaseUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        String sql = "INSERT INTO users (user_name, email, login, birthday) VALUES (?, ?, ?, ?)";
+        String sqlQuery = "insert into users (user_name,email,login,birthday) " +
+                "values (?,?,?,?);";
+
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(sql, new String[]{"id"});
-            ps.setString(1, user.getName());
-            ps.setString(2, user.getEmail());
-            ps.setString(3, user.getLogin());
-            ps.setDate(4, java.sql.Date.valueOf(user.getBirthday()));
-            return ps;
+        jdbcTemplate.update(con -> {
+            PreparedStatement pr = con.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
+            pr.setString(1, user.getName());
+            pr.setString(2, user.getEmail());
+            pr.setString(3, user.getLogin());
+            pr.setDate(4, Date.valueOf(user.getBirthday()));
+            return pr;
         }, keyHolder);
-        user.setId(keyHolder.getKey().intValue());
+
+        Number generatedKey = keyHolder.getKey();
+        user.setId(generatedKey.intValue());
         return user;
+
     }
 
     @Override
     public User updateUser(User user) {
-        String sql = "UPDATE users SET email = ?, login = ?, user_name = ?, birthday = ? WHERE id = ?";
-        jdbcTemplate.update(sql, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
-        return getUserById(user.getId());
+        String sqlQuery = "UPDATE users SET user_name = ?, email = ?, login = ?, birthday = ? WHERE user_id = ?";
+        jdbcTemplate.update(sqlQuery, user.getName(), user.getEmail(), user.getLogin(), user.getBirthday(), user.getId());
+        return user;
     }
 
     @Override
     public void deleteUser(int id) {
-        jdbcTemplate.update("DELETE FROM users WHERE id = ?", id);
+        jdbcTemplate.update("DELETE FROM users WHERE user_id = ?", id);
     }
 
     @Override
     public List<User> getAllUsers() {
-        String sql = "SELECT * FROM users";
-        return jdbcTemplate.query(sql, new UserMapper());
+        String sqlQuery = "SELECT * FROM users";
+        return jdbcTemplate.query(sqlQuery, new UserMapper());
     }
 
     @Override
     public User getUserById(int id) {
-        String sql = "SELECT * FROM users WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, new UserMapper(), id);
+        String sqlQuery = "SELECT * FROM users WHERE user_id = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, new UserMapper(), id);
     }
 
     @Override
     public void addFriend(int userId, int friendId) {
-        String sql = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
-        jdbcTemplate.update(sql, userId, friendId);
+        String sqlQuery = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
     public void removeFriend(int userId, int friendId) {
-        String sql = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
-        jdbcTemplate.update(sql, userId, friendId);
+        getUserById(userId);
+        getUserById(friendId);
+        String sqlQuery = "DELETE FROM friends WHERE user_id = ? AND friend_id = ?";
+        jdbcTemplate.update(sqlQuery, userId, friendId);
     }
 
     @Override
     public List<User> getFriends(int userId) {
-        String sql = "SELECT u.* FROM users u " +
+        String sqlQuery = "SELECT u.* FROM users u " +
                 "JOIN friends f ON u.id = f.friend_id " +
                 "WHERE f.user_id = ?";
-        return jdbcTemplate.query(sql, new UserMapper(), userId);
+        return jdbcTemplate.query(sqlQuery, new UserMapper(), userId);
     }
 
 }

@@ -5,14 +5,14 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mappers.GenresMapper;
 
 import java.util.Collection;
 import java.util.Optional;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class DataBaseGenreStorage implements GenreStorage {
 

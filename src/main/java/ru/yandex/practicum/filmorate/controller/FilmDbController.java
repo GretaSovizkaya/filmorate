@@ -17,7 +17,7 @@ public class FilmDbController {
     private final FilmDbService filmService;
 
     @PostMapping
-    public Film addNewFilms(@Valid @RequestBody Film film) {
+    public Film addFilm(@Valid @RequestBody Film film) {
         log.info("Добавление нового фильма: {}", film);
         return filmService.addFilm(film);
     }

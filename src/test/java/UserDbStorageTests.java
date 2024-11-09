@@ -1,4 +1,5 @@
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,9 @@ import org.springframework.test.context.ContextConfiguration;
 import ru.yandex.practicum.filmorate.FilmorateApplication;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.DataBaseUserStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,39 +23,83 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DisplayName("DataBaseUserStorage")
 class UserDbStorageTests {
-    private final UserStorage userStorage;
+    private final DataBaseUserStorage userDbStorage;
 
     @Test
-    void testAddUser() {
-        User user = new User();
-        user.setName("Alice");
-        user.setEmail("alice@example.com");
-        user.setLogin("alice123");
-        user.setBirthday(LocalDate.of(1995, 5, 15));
+    public void checkCreateNewUserAndGetById() {
 
-        User savedUser = userStorage.addUser(user);
+        User user = new User(3, "Roman", "email@mail.ru", "login12"
+                , LocalDate.now());
 
-        assertThat(savedUser.getId()).isNotNull();
-        assertThat(savedUser.getName()).isEqualTo("Alice");
+        userDbStorage.addUser(user);
+
+        User user1 = userDbStorage.getUserById(user.getId());
+
+        assertThat(user1).hasFieldOrPropertyWithValue("id", 3);
+
+        userDbStorage.deleteUser(user.getId());
+
     }
 
     @Test
-    void testFindUserById() {
-        User user = new User();
-        user.setName("Bob");
-        user.setEmail("bob@example.com");
-        user.setLogin("bob321");
-        user.setBirthday(LocalDate.of(1990, 3, 10));
+    public void checkGetAllUsers() {
 
-        User savedUser = userStorage.addUser(user);
+        User user = new User(3, "Roma", "email@mail.ru", "login12"
+                , LocalDate.now());
 
-        Optional<User> userOptional = Optional.ofNullable(userStorage.getUserById(savedUser.getId()));
+        userDbStorage.addUser(user);
 
-        assertThat(userOptional)
-                .isPresent()
-                .hasValueSatisfying(u ->
-                        assertThat(u).hasFieldOrPropertyWithValue("name", "Bob")
-                );
+        List<User> users = userDbStorage.getAllUsers();
+
+        Assertions.assertEquals(users.size(), 3);
+
+        userDbStorage.deleteUser(user.getId());
+    }
+
+    @Test
+    public void updateUserAndGetById() {
+
+        User user = new User(1, "roma", "email@mail.ru", "login12"
+                , LocalDate.now());
+        userDbStorage.addUser(user);
+
+        user.setName("Rita");
+        userDbStorage.updateUser(user);
+
+        User user1 = userDbStorage.getUserById(user.getId());
+
+        assertThat(user1).hasFieldOrPropertyWithValue("name", "Rita");
+
+
+        userDbStorage.deleteUser(user.getId());
+    }
+
+    @Test
+    public void deleteUserAndGerAllUser() {
+
+        User user = new User(1, "dima", "email@mail.ru", "login12", LocalDate.now());
+        userDbStorage.addUser(user);
+
+        List<User> users = userDbStorage.getAllUsers();
+
+        userDbStorage.deleteUser(user.getId());
+
+        List<User> users1 = userDbStorage.getAllUsers();
+
+        Assertions.assertNotEquals(users1, users);
+    }
+
+    @Test
+    public void compareUsers() {
+
+        User user = new User(1, "Roma", "email@mail.ru", "login12"
+                , LocalDate.now());
+
+
+        User user1 = new User(1, "Roma", "email@mail.ru", "login12"
+                , LocalDate.now());
+        Assertions.assertEquals(user1, user);
+
     }
 }
 

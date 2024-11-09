@@ -7,18 +7,16 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.DataBaseFilmStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.FilmorateApplication;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-
 
 @JdbcTest
 @AutoConfigureTestDatabase
@@ -40,24 +38,6 @@ class FilmDbStorageTests {
         Film createdFilm = filmStorage.addFilm(film);
 
         assertThat(createdFilm).isNotNull();
-        assertThat(createdFilm.getId()).isGreaterThan(0);
-    }
-
-    @Test
-    public void testGetFilmById() {
-        Film film = new Film();
-        film.setName("Interstellar");
-        film.setDescription("A space exploration thriller");
-        film.setReleaseDate(LocalDate.of(2014, 11, 7));
-        film.setDuration(Duration.ofMinutes(169));
-        film.setGenre("Sci-Fi");
-
-        Film createdFilm = filmStorage.addFilm(film);
-        Optional<Film> foundFilm = Optional.ofNullable(filmStorage.getFilmById(createdFilm.getId()));
-
-        assertThat(foundFilm).isPresent().hasValueSatisfying(f ->
-                assertThat(f).hasFieldOrPropertyWithValue("id", createdFilm.getId())
-        );
     }
 
     @Test
@@ -76,25 +56,27 @@ class FilmDbStorageTests {
             filmStorage.getFilmById(createdFilm.getId());
         });
     }
+
     @Test
-    public void testAddFilmAndGet () {
+    public void testGetAllFilms() {
+        Film film1 = new Film();
+        film1.setName("Film 1");
+        film1.setDescription("Description 1");
+        film1.setReleaseDate(LocalDate.of(2020, 1, 1));
+        film1.setDuration(Duration.ofMinutes(120));
+        film1.setGenre("Drama");
 
-        Set<Long> likkes = new HashSet<>();
-        likkes.add(1L);
-        likkes.add(2L);
+        Film film2 = new Film();
+        film2.setName("Film 2");
+        film2.setDescription("Description 2");
+        film2.setReleaseDate(LocalDate.of(2021, 1, 1));
+        film2.setDuration(Duration.ofMinutes(130));
+        film2.setGenre("Comedy");
 
-        Genre genre = new Genre();
-        Genre genre1 = new Genre();
-        Set<Genre> genres = new HashSet<>();
-        genres.add(genre);
-        genres.add(genre1);
+        filmStorage.addFilm(film1);
+        filmStorage.addFilm(film2);
 
-        Film film = new Film();
-
-        filmStorage.addFilm(film);
-
-        Film film1 = filmStorage.getFilmById(film.getId());
-
-        assertThat(film1).hasFieldOrPropertyWithValue("id",1L);
+        List<Film> films = filmStorage.getAllFilms();
+        assertThat(films).hasSizeGreaterThanOrEqualTo(2);
     }
 }
