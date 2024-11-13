@@ -4,27 +4,27 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
 @Data
+@NonNull
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
 
-    private int id;
+    int id;
 
-    private String name;
+    String name;
 
-    @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email should be valid")
-    private String email;
+    String email;
 
-    @NotBlank(message = "Login cannot be empty")
-    private String login;
+    String login;
 
-    @NonNull
     @PastOrPresent(message = "Birthday cannot be in the future")
-    private LocalDate birthday;
+    LocalDate birthday;
 
 }

@@ -12,7 +12,7 @@ public interface GenreStorage {
 
     Genre create(Genre genre);
 
-    void delete(Genre genre);
+    /*void delete(Genre genre);
 
-    Genre update(Genre genre);
+    Genre update(Genre genre);*/
 }

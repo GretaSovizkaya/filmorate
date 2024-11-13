@@ -32,7 +32,7 @@ class FilmDbStorageTests {
         film.setName("Inception");
         film.setDescription("A sci-fi thriller");
         film.setReleaseDate(LocalDate.of(2010, 7, 16));
-        film.setDuration(Duration.ofMinutes(148));
+        film.setDuration(148L);
         film.setGenre("Sci-Fi");
 
         Film createdFilm = filmStorage.addFilm(film);
@@ -46,7 +46,7 @@ class FilmDbStorageTests {
         film.setName("Dunkirk");
         film.setDescription("A WWII thriller");
         film.setReleaseDate(LocalDate.of(2017, 7, 21));
-        film.setDuration(Duration.ofMinutes(106));
+        film.setDuration(148L);
         film.setGenre("War");
 
         Film createdFilm = filmStorage.addFilm(film);
@@ -63,14 +63,14 @@ class FilmDbStorageTests {
         film1.setName("Film 1");
         film1.setDescription("Description 1");
         film1.setReleaseDate(LocalDate.of(2020, 1, 1));
-        film1.setDuration(Duration.ofMinutes(120));
+        film1.setDuration(148L);
         film1.setGenre("Drama");
 
         Film film2 = new Film();
         film2.setName("Film 2");
         film2.setDescription("Description 2");
         film2.setReleaseDate(LocalDate.of(2021, 1, 1));
-        film2.setDuration(Duration.ofMinutes(130));
+        film2.setDuration(148L);
         film2.setGenre("Comedy");
 
         filmStorage.addFilm(film1);

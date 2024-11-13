@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.mappers.UserMapper;
 
@@ -20,8 +22,8 @@ public class DataBaseUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        String sqlQuery = "insert into users (user_name,email,login,birthday) " +
-                "values (?,?,?,?);";
+        String sqlQuery = "INSERT INTO users (user_name,email,login,birthday) " +
+                "VALUES (?,?,?,?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
@@ -42,7 +44,11 @@ public class DataBaseUserStorage implements UserStorage {
     @Override
     public User updateUser(User user) {
         String sqlQuery = "UPDATE users SET user_name = ?, email = ?, login = ?, birthday = ? WHERE user_id = ?";
-        jdbcTemplate.update(sqlQuery, user.getName(), user.getEmail(), user.getLogin(), user.getBirthday(), user.getId());
+        int execp = jdbcTemplate.update(sqlQuery, user.getName(), user.getEmail(), user.getLogin(),
+                user.getBirthday(), user.getId());
+        if (execp == 0) {
+            throw new NotFoundException("Невозможно обновить пользователя с id =" + user.getId());
+        }
         return user;
     }
 
@@ -60,13 +66,19 @@ public class DataBaseUserStorage implements UserStorage {
     @Override
     public User getUserById(int id) {
         String sqlQuery = "SELECT * FROM users WHERE user_id = ?";
-        return jdbcTemplate.queryForObject(sqlQuery, new UserMapper(), id);
+        try {
+            return jdbcTemplate.queryForObject(sqlQuery, new Object[]{id}, new UserMapper());
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new NotFoundException("Пользователь с id=" + id + " не найден");
+        }
     }
 
     @Override
     public void addFriend(int userId, int friendId) {
-        String sqlQuery = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
-        jdbcTemplate.update(sqlQuery, userId, friendId);
+        getUserById(userId);
+        getUserById(friendId);
+        final String sqlQuery = "INSERT INTO friends (user_id, friend_id,status) VALUES (?,?,?);";
+        jdbcTemplate.update(sqlQuery, friendId, userId, "unconfirmed");
     }
 
     @Override
@@ -79,10 +91,21 @@ public class DataBaseUserStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int userId) {
-        String sqlQuery = "SELECT u.* FROM users u " +
-                "JOIN friends f ON u.id = f.friend_id " +
-                "WHERE f.user_id = ?";
+        getUserById(userId);
+        String sqlQuery = "SELECT * FROM users " +
+                "INNER JOIN friends ON users.user_id = friends.user_id WHERE friend_id = ?";
         return jdbcTemplate.query(sqlQuery, new UserMapper(), userId);
+    }
+
+    @Override
+    public List<User> getCommonFriends(int userId, int friendId) {
+        getUserById(userId);
+        getUserById(friendId);
+        final String sqlQuery = "select distinct u.* from users u " +
+                "inner join friends f1 on u.user_id = f1.friend_id " +
+                "inner join friends f2 on u.user_id = f2.friend_id " +
+                "where f1.user_id = ? and f2.user_id = ?";
+        return jdbcTemplate.query(sqlQuery, new UserMapper(), friendId, userId);
     }
 
 }

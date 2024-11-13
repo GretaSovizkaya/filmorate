@@ -31,7 +31,7 @@ public class DataBaseFilmStorage implements FilmStorage {
             ps.setString(1, film.getName());
             ps.setString(2, film.getDescription());
             ps.setDate(3, Date.valueOf(film.getReleaseDate()));
-            ps.setInt(4, (int) film.getDuration().toMinutes());
+            ps.setLong(4, film.getDuration());
             ps.setString(5, film.getGenre());
             return ps;
         }, keyHolder);
@@ -66,14 +66,14 @@ public class DataBaseFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getAllFilms() {
-        String sql = "SELECT * FROM films";
-        return jdbcTemplate.query(sql, new FilmMapper());
+        String sqlQuery = "SELECT * FROM films";
+        return jdbcTemplate.query(sqlQuery, new FilmMapper());
     }
 
     @Override
     public Film getFilmById(int id) {
-        String sql = "SELECT * FROM films WHERE film_id = ?";
-        return jdbcTemplate.queryForObject(sql, new FilmMapper(), id);
+        String sqlQuery = "SELECT * FROM films WHERE film_id = ?";
+        return jdbcTemplate.queryForObject(sqlQuery, new FilmMapper(), id);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class DataBaseFilmStorage implements FilmStorage {
         final String sqlQuery = "insert into likes (film_id,user_id) values (?,?)";
         jdbcTemplate.update(con -> {
             PreparedStatement pr = con.prepareStatement(sqlQuery);
-            pr.setLong(1, filmId);
-            pr.setLong(2, userId);
+            pr.setInt(1, filmId);
+            pr.setInt(2, userId);
             return pr;
         });
     }
@@ -91,5 +91,19 @@ public class DataBaseFilmStorage implements FilmStorage {
     public void removeLike(int filmId, int userId) {
         String sql = "DELETE FROM likes WHERE film_id = ? AND user_id = ?";
         jdbcTemplate.update(sql, filmId, userId);
+    }
+    @Override
+    public List<Film> getPopularFilms(int count) {
+        String sqlQuery = "SELECT * " +
+                "FROM films " +
+                "inner join rating_mpa on films.rating_id = rating_mpa.rating_id " +
+                "WHERE film_id IN ( " +
+                "    SELECT  likes.film_id " +
+                "    FROM likes " +
+                "    GROUP BY likes.film_id " +
+                "    ORDER BY COUNT(likes.user_id) DESC " +
+                "LIMIT ?" +
+                ");";
+        return jdbcTemplate.query(sqlQuery, new FilmMapper(),count);
     }
 }

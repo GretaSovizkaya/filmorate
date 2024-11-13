@@ -4,35 +4,33 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Set;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Film {
 
-    private int id;
+    int id;
 
-    @NotBlank(message = "Name cannot be empty!")
-    private String name;
+    String name;
 
     @Size(max = 200, message = "Description is too long!")
-    private String description;
+    String description;
 
-    @NonNull
     @PastOrPresent(message = "Release date cannot be in the future")
-    private LocalDate releaseDate;
+    LocalDate releaseDate;
 
-    private Duration duration;
+    Long duration;
 
-    private String genre;
+    String genre;
 
-    private String rating;
-    private int ratingId;
-
-    private Set<Integer> genreIds;
+    Set<Integer> likes;
+    Rating rating;
 }

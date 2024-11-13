@@ -20,8 +20,8 @@ public class DataBaseGenreStorage implements GenreStorage {
 
     @Override
     public Collection<Genre> getGenres() {
-        final String SELECT_QUERY = "SELECT * FROM GENRE";
-        return jdbc.query(SELECT_QUERY, new GenresMapper());
+        final String sqlQuery = "SELECT * FROM GENRE";
+        return jdbc.query(sqlQuery, new GenresMapper());
     }
 
     @Override
@@ -45,11 +45,11 @@ public class DataBaseGenreStorage implements GenreStorage {
         parameters.addValue("genreName", genre.getName());
 
         jdbc.update(INSERT_GENRE_QUERY, parameters, keyHolder);
-        genre.setId(keyHolder.getKeyAs(Long.class));
+        genre.setId(keyHolder.getKeyAs(Integer.class));
         return genre;
     }
 
-    @Override
+    /*@Override
     public Genre update(Genre genre) {
         final String UPDATE_GENRE_QUERY = "UPDATE GENRE SET NAME_GENRE = :genreName WHERE GENRE_ID = :genreId";
         MapSqlParameterSource parameters = new MapSqlParameterSource();
@@ -70,6 +70,6 @@ public class DataBaseGenreStorage implements GenreStorage {
 
         jdbc.update(DELETE_GENRE_QUERY, parameters);
         jdbc.update(DELETE_FILM_GENRES_QUERY, parameters);
-    }
+    }*/
 
 }
