@@ -20,8 +20,8 @@ public class DataBaseGenreStorage implements GenreStorage {
 
     @Override
     public Collection<Genre> getGenres() {
-        final String sqlQuery = "SELECT * FROM GENRE";
-        return jdbc.query(sqlQuery, new GenresMapper());
+        final String SELECT_QUERY = "SELECT * FROM GENRE";
+        return jdbc.query(SELECT_QUERY, new GenresMapper());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class DataBaseGenreStorage implements GenreStorage {
         }
     }
 
-    @Override
+    /*@Override
     public Genre create(Genre genre) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         final String INSERT_GENRE_QUERY = "INSERT INTO GENRE (NAME_GENRE) VALUES (:genreName)";
@@ -45,7 +45,7 @@ public class DataBaseGenreStorage implements GenreStorage {
         parameters.addValue("genreName", genre.getName());
 
         jdbc.update(INSERT_GENRE_QUERY, parameters, keyHolder);
-        genre.setId(keyHolder.getKeyAs(Integer.class));
+        genre.setId(keyHolder.getKeyAs(Long.class));
         return genre;
     }
 

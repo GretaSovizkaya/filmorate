@@ -7,18 +7,18 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.storage.RatingStorage;
 
 import java.util.Collection;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class RatingService {
     private final RatingStorage ratingStorage;
 
-    public List<Rating> getRatingList() {
+    public Collection<Rating> getRatingList() {
         return ratingStorage.getRatingList();
     }
 
     public Rating findById(int id) {
-        return ratingStorage.findById(id);
+        return ratingStorage.findById(id)
+                .orElseThrow(() -> new NotFoundException("Рейтинг не найден"));
     }
 }

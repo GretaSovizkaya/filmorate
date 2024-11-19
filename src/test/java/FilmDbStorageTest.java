@@ -7,12 +7,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.DataBaseFilmStorage;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.FilmorateApplication;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @ContextConfiguration(classes = FilmorateApplication.class)
 @Import(DataBaseFilmStorage.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-class FilmDbStorageTests {
+class FilmDbStorageTest {
     private final FilmStorage filmStorage;
 
     @Test
@@ -32,13 +34,15 @@ class FilmDbStorageTests {
         film.setName("Inception");
         film.setDescription("A sci-fi thriller");
         film.setReleaseDate(LocalDate.of(2010, 7, 16));
-        film.setDuration(148L);
-        film.setGenre("Sci-Fi");
+        film.setDuration(148);
+        film.setGenre(new HashSet<>(List.of(new Genre(1, "Sci-Fi")))); // исправление жанра
 
         Film createdFilm = filmStorage.addFilm(film);
 
         assertThat(createdFilm).isNotNull();
+        assertThat(createdFilm.getId()).isGreaterThan(0);
     }
+
 
     @Test
     public void testDeleteFilm() {
@@ -46,7 +50,7 @@ class FilmDbStorageTests {
         film.setName("Dunkirk");
         film.setDescription("A WWII thriller");
         film.setReleaseDate(LocalDate.of(2017, 7, 21));
-        film.setDuration(148L);
+        film.setDuration((106));
         film.setGenre("War");
 
         Film createdFilm = filmStorage.addFilm(film);
@@ -63,14 +67,14 @@ class FilmDbStorageTests {
         film1.setName("Film 1");
         film1.setDescription("Description 1");
         film1.setReleaseDate(LocalDate.of(2020, 1, 1));
-        film1.setDuration(148L);
+        film1.setDuration((120));
         film1.setGenre("Drama");
 
         Film film2 = new Film();
         film2.setName("Film 2");
         film2.setDescription("Description 2");
         film2.setReleaseDate(LocalDate.of(2021, 1, 1));
-        film2.setDuration(148L);
+        film2.setDuration((130));
         film2.setGenre("Comedy");
 
         filmStorage.addFilm(film1);

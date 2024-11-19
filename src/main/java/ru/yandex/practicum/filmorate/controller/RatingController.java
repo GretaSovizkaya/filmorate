@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.model.Rating;
 import ru.yandex.practicum.filmorate.service.RatingService;
 
 import java.util.Collection;
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -20,12 +19,12 @@ public class RatingController {
     private final RatingService ratingService;
 
     @GetMapping
-    public List<Rating> getRatingList() {
+    public Collection<Rating> getRatingList() {
         return ratingService.getRatingList();
     }
 
     @GetMapping("{id}")
-    public Rating findRatingById(@PathVariable("id") int id) {
+    public Rating findRating(@PathVariable int id) {
         return ratingService.findById(id);
     }
 

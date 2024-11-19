@@ -1,36 +1,32 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
-import lombok.experimental.FieldDefaults;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.util.Set;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class Film {
 
-    int id;
+    private int id;
 
-    String name;
+    private String name;
 
-    @Size(max = 200, message = "Description is too long!")
-    String description;
+    private String description;
 
-    @PastOrPresent(message = "Release date cannot be in the future")
-    LocalDate releaseDate;
+    @PastOrPresent(message = "Дата релиза не может быть в будущем")
+    private LocalDate releaseDate;
 
-    Long duration;
+    private int duration;
 
-    String genre;
+    private Set<Genre> genre;
 
-    Set<Integer> likes;
-    Rating rating;
+    private Rating rating;
+
+    Set<Long> likes;
 }

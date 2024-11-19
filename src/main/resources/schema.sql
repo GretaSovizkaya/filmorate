@@ -24,7 +24,6 @@ create TABLE IF NOT EXISTS FILMS
 	DESCRIPTION VARCHAR(255),
 	RELEASE_DATE DATE,
     DURATION INT,
-    GENRE VARCHAR(50),
     rating_id INTEGER REFERENCES rating_mpa (rating_id),
     CONSTRAINT film_id_pk PRIMARY KEY (film_id)
 );

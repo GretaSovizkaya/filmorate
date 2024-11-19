@@ -27,6 +27,6 @@ class GenreDbStorageTests {
 
 
         assertThat(listGenres.size())
-                .isEqualTo(7);
+                .isEqualTo(6);
     }
 }

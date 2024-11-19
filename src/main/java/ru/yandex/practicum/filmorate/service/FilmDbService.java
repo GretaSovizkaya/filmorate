@@ -1,16 +1,16 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
 
 @Slf4j
 @Service
@@ -42,18 +42,17 @@ public class FilmDbService {
         filmStorage.deleteFilm(id);
     }
 
-    public void addLike(int id, int userId) {
-        filmStorage.addLike(id, userId);
+    public void addLike(int filmId, int userId) {
+        filmStorage.addLike(filmId, userId);
     }
 
-    public void removeLike(int id, int userId) {
-        filmStorage.removeLike(id, userId);
+    public void removeLike(int filmId, int userId) {
+        filmStorage.removeLike(filmId, userId);
     }
 
-    public List<Film> getPopularFilm(int count) {
+    public List<Film> getPopularFilms(int count) {
         return filmStorage.getPopularFilms(count);
     }
-
     private void checkValidation(Film film) {
         if (film.getName().isBlank()) {
             log.error("Название не может быть пустым");

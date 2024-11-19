@@ -22,8 +22,8 @@ public class DataBaseUserStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        String sqlQuery = "INSERT INTO users (user_name,email,login,birthday) " +
-                "VALUES (?,?,?,?);";
+        String sqlQuery = "insert into users (user_name,email,login,birthday) " +
+                "values (?,?,?,?);";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
@@ -43,10 +43,16 @@ public class DataBaseUserStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        String sqlQuery = "UPDATE users SET user_name = ?, email = ?, login = ?, birthday = ? WHERE user_id = ?";
-        int execp = jdbcTemplate.update(sqlQuery, user.getName(), user.getEmail(), user.getLogin(),
-                user.getBirthday(), user.getId());
-        if (execp == 0) {
+        final String sqlQuery = "UPDATE users SET name = ?, email = ?, login = ?, birthday = ? WHERE user_id = ?";
+
+        int rowsAffected = jdbcTemplate.update(sqlQuery,
+                user.getName(),
+                user.getEmail(),
+                user.getLogin(),
+                user.getBirthday(),
+                user.getId());
+
+        if (rowsAffected == 0) {
             throw new NotFoundException("Невозможно обновить пользователя с id =" + user.getId());
         }
         return user;
@@ -75,11 +81,21 @@ public class DataBaseUserStorage implements UserStorage {
 
     @Override
     public void addFriend(int userId, int friendId) {
-        getUserById(userId);
-        getUserById(friendId);
-        final String sqlQuery = "INSERT INTO friends (user_id, friend_id,status) VALUES (?,?,?);";
-        jdbcTemplate.update(sqlQuery, friendId, userId, "unconfirmed");
+        if (getUserById(userId) == null) {
+            throw new IllegalArgumentException("Пользователь с id " + userId + " не найден.");
+        }
+        if (getUserById(friendId) == null) {
+            throw new IllegalArgumentException("Пользователь с id " + friendId + " не найден.");
+        }
+        String checkQuery = "SELECT COUNT(*) FROM friends WHERE user_id = ? AND friend_id = ?";
+        Integer count = jdbcTemplate.queryForObject(checkQuery, Integer.class, userId, friendId);
+        if (count != null && count > 0) {
+            throw new IllegalArgumentException("Пользователь уже является другом.");
+        }
+        String sqlQuery = "INSERT INTO friends (user_id, friend_id) VALUES (?, ?)";
+        jdbcTemplate.update(sqlQuery, userId, friendId);
     }
+
 
     @Override
     public void removeFriend(int userId, int friendId) {
@@ -91,21 +107,28 @@ public class DataBaseUserStorage implements UserStorage {
 
     @Override
     public List<User> getFriends(int userId) {
-        getUserById(userId);
-        String sqlQuery = "SELECT * FROM users " +
-                "INNER JOIN friends ON users.user_id = friends.user_id WHERE friend_id = ?";
+        if (getUserById(userId) == null) {
+            throw new IllegalArgumentException("Пользователь с id " + userId + " не найден.");
+        }
+        String sqlQuery = "SELECT u.* FROM users u " +
+                "JOIN friends f ON u.user_id = f.friend_id " +
+                "WHERE f.user_id = ?";
         return jdbcTemplate.query(sqlQuery, new UserMapper(), userId);
     }
 
+
     @Override
     public List<User> getCommonFriends(int userId, int friendId) {
-        getUserById(userId);
-        getUserById(friendId);
-        final String sqlQuery = "select distinct u.* from users u " +
-                "inner join friends f1 on u.user_id = f1.friend_id " +
-                "inner join friends f2 on u.user_id = f2.friend_id " +
-                "where f1.user_id = ? and f2.user_id = ?";
-        return jdbcTemplate.query(sqlQuery, new UserMapper(), friendId, userId);
+        // Проверка существования пользователей
+        if (getUserById(userId) == null || getUserById(friendId) == null) {
+            throw new IllegalArgumentException("Один из пользователей не найден.");
+        }
+        String sqlQuery = "SELECT DISTINCT u.* FROM users u " +
+                "JOIN friends f1 ON u.user_id = f1.friend_id " +
+                "JOIN friends f2 ON u.user_id = f2.friend_id " +
+                "WHERE f1.user_id = ? AND f2.user_id = ?";
+        return jdbcTemplate.query(sqlQuery, new UserMapper(), userId, friendId);
     }
+
 
 }

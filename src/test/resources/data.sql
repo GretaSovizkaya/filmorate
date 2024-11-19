@@ -1,7 +1,0 @@
-insert into USERS (USER_NAME, EMAIL,LOGIN,BIRTHDAY) values('UserName','test@mail.com','UserName','1990-10-20')
-insert into USERS (USER_NAME, EMAIL,LOGIN,BIRTHDAY) values('FriendName','testFriend@mail.com','FriendName','1990-10-20')
-insert into GENRE (NAME_GENRE) values ('Криминал')
-insert into RATING_MPA (RATING_NAME) values ('G')
-insert into RATING_MPA (RATING_NAME) values ('PG')
-insert into FILMS (FILM_NAME,DESCRIPTION,RELEASE_DATE,DURATION,GENRE) values('Джентельмены','Гангстеры делят наркоферму','2019-12-03', 113, 'боевик')
-insert into GENRES_FILM (FILM_ID,GENRE_ID) values(1,1)

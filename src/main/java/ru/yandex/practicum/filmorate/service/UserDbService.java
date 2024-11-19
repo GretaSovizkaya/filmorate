@@ -1,11 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
 import io.micrometer.common.util.StringUtils;
-import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,12 +18,10 @@ public class UserDbService {
     private final UserStorage userStorage;
 
     public User addUser(User user) {
-        validation(user);
         return userStorage.addUser(user);
     }
 
     public User updateUser(User user) {
-        validation(user);
         return userStorage.updateUser(user);
     }
 
@@ -51,8 +49,8 @@ public class UserDbService {
         return userStorage.getFriends(userId);
     }
 
-    public List<User> getCommonFriend(int userId, int friendId) {
-        return userStorage.getCommonFriends(userId, friendId);
+    public List<User> getCommonFriends(int id, int otherId) {
+        return userStorage.getCommonFriends(id, otherId);
     }
     private void validation(User user) {
         if (StringUtils.isBlank(user.getEmail())) {
@@ -67,5 +65,4 @@ public class UserDbService {
             throw new ValidationException("Дата рождения не может быть в будущем.");
         }
     }
-
 }

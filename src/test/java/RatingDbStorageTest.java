@@ -27,6 +27,6 @@ public class RatingDbStorageTest {
         List<Rating> listMPA = ratingStorage.getRatingList().stream().toList();
 
         assertThat(listMPA.size())
-                .isEqualTo(7);
+                .isEqualTo(5);
     }
 }

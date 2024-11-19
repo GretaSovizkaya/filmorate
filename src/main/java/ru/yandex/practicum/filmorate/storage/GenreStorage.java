@@ -10,7 +10,7 @@ public interface GenreStorage {
 
     Collection<Genre> getGenres();
 
-    Genre create(Genre genre);
+    /*Genre create(Genre genre);
 
     /*void delete(Genre genre);
 
