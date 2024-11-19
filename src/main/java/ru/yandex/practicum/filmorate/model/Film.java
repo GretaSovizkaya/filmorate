@@ -1,32 +1,28 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.*;
-import lombok.*;
 
-import java.time.Duration;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.LinkedHashSet;
+
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(of = "id")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Film {
 
-    private int id;
-
-    private String name;
-
-    private String description;
-
-    @PastOrPresent(message = "Дата релиза не может быть в будущем")
-    private LocalDate releaseDate;
-
-    private int duration;
-
-    private Set<Genre> genre;
-
-    private Rating rating;
-
-    Set<Long> likes;
+    long id;
+    String name;
+    String description;
+    LocalDate releaseDate;
+    Integer duration;
+    Integer likes = 0;
+    LinkedHashSet<Genre> genres;
+    Rating mpa;
 }

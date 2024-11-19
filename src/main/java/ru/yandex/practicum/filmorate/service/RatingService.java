@@ -4,21 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Rating;
-import ru.yandex.practicum.filmorate.storage.RatingStorage;
+import ru.yandex.practicum.filmorate.repository.RatingRepository;
 
 import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
 public class RatingService {
-    private final RatingStorage ratingStorage;
+    private final RatingRepository ratingRepository;
 
     public Collection<Rating> getRatingList() {
-        return ratingStorage.getRatingList();
+        return ratingRepository.getRatingList();
     }
 
-    public Rating findById(int id) {
-        return ratingStorage.findById(id)
+    public Rating findById(long id) {
+        return ratingRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Рейтинг не найден"));
     }
 }

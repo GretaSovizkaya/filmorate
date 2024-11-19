@@ -1,14 +1,11 @@
-MERGE INTO rating_mpa  KEY (rating_id) VALUES
-(1,'G'),
-(2, 'PG'),
-(3, 'PG-13'),
-(4, 'R'),
-(5, 'NC-17');
-
-MERGE INTO genre KEY (genre_id) VALUES
-(1,'Комедия'),
-(2, 'Драма'),
-(3, 'Мультфильм'),
-(4, 'Триллер'),
-(5, 'Документальный'),
-(6, 'Боевик');
+INSERT INTO GENRES (GENRE_NAME) values ('Комедия')
+INSERT INTO GENRES (GENRE_NAME) values ('Драма')
+INSERT INTO GENRES (GENRE_NAME) values ('Мультфильм')
+INSERT INTO GENRES (GENRE_NAME) values ('Триллер')
+INSERT INTO GENRES (GENRE_NAME) values ('Документальный')
+INSERT INTO GENRES (GENRE_NAME) values ('Боевик')
+INSERT INTO RATING (RATING_NAME) values ('G')
+INSERT INTO RATING (RATING_NAME) values ('PG')
+INSERT INTO RATING (RATING_NAME) values ('PG-13')
+INSERT INTO RATING (RATING_NAME) values ('R')
+INSERT INTO RATING (RATING_NAME) values ('NC-17')
