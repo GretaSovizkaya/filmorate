@@ -1,5 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -8,8 +10,9 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 
 @Service
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ValidateService {
-    private final LocalDate birthdayOfCinema = LocalDate.of(1895, 12, 28);
+    LocalDate birthdayOfCinema = LocalDate.of(1895, 12, 28);
 
     public void validateUser(User user) {
         if (user.getName() == null || user.getName().isBlank()) {

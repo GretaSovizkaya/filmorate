@@ -15,7 +15,6 @@ public interface UserRepository {
 
     Optional<User> getUser(long id);
 
-
     void addFriend(User user, User friend);
 
     void deleteFriend(User user, User friend);

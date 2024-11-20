@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -16,18 +18,23 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class FilmService {
-    private final FilmRepository filmRepository;
-    private final RatingRepository ratingRepository;
-    private final GenreRepository genreRepository;
-    private final UserRepository userRepository;
+
+    ValidateService validateService;
+    FilmRepository filmRepository;
+    RatingRepository ratingRepository;
+    GenreRepository genreRepository;
+    UserRepository userRepository;
 
     public Film addFilm(Film film) {
+        validateService.validateFilm(film);
         validateGenresAndRating(film);
         return filmRepository.addFilm(film);
     }
 
     public Film updateFilm(Film film) {
+        validateService.validateFilm(film);
         filmRepository.getFilm(film.getId())
                 .orElseThrow(() -> new NotFoundException("Фильм не найден"));
         return filmRepository.updateFilm(film);

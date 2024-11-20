@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
@@ -11,18 +13,22 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class UserService {
-    private final UserRepository userRepository;
+    ValidateService validateService;
+    UserRepository userRepository;
 
     public Collection<User> getAllUsers() {
         return userRepository.getUsers();
     }
 
     public User addUser(User user) {
+        validateService.validateUser(user);
         return userRepository.addUser(user);
     }
 
     public User updateUser(User user) {
+        validateService.validateUser(user);
         userRepository.getUser(user.getId())
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         return userRepository.updateUser(user);

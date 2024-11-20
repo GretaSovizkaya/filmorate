@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,29 +17,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.service.ValidateService;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/films")
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class FilmController {
-
-    private final FilmService filmService;
-    private final ValidateService validateService;
-
+    FilmService filmService;
 
     @PostMapping
     public ResponseEntity<Film> addFilm(@Valid @RequestBody Film film) {
-        validateService.validateFilm(film);
         return new ResponseEntity<>(filmService.addFilm(film), HttpStatus.CREATED);
     }
 
-
     @PutMapping
     public ResponseEntity<Film> updateFilm(@Valid @RequestBody Film filmNewInfo) {
-        validateService.validateFilm(filmNewInfo);
         return new ResponseEntity<>(filmService.updateFilm(filmNewInfo), HttpStatus.OK);
     }
 

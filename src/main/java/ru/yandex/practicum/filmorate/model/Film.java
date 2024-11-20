@@ -1,10 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
@@ -13,6 +9,7 @@ import java.util.LinkedHashSet;
 
 @Data
 @RequiredArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Film {
