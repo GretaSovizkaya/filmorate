@@ -1,4 +1,9 @@
-# java-filmorate
+# Рейтинг фильмов
+
+Filmorate - бэкенд для сервиса,  работающий с фильмами и оценками пользователей, а также возвращающий топ-5 фильмов, рекомендованных к просмотру.  
+
+Используемые технологии: Spring Boot,  Lombok, Git, REST, Postman, H2, SQL, Maven.
+
 ![ ](https://github.com/GretaSovizkaya/java-filmorate/blob/213a8d6dbc386fbced81fc7f7822b7625fbcdeab/ER%20Diagram%20Filmorate%20(2).png)
 Примеры запросов для основных операций приложения:
 1) Получение всех фильмов
