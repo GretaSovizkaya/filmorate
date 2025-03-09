@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.exception;
 
-import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -9,21 +9,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    @ExceptionHandler(ValidationException.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String handleValidationException(ValidationException e) {
-        return e.getMessage();
+    public ResponseEntity<Object> handleValidationException(final ValidationException e, Object item) {
+        return ResponseEntity.badRequest().body(item);
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFoundException(NotFoundException e) {
-        return e.getMessage();
-    }
-
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleException(Exception e) {
-        return e.getMessage();
+    public ResponseEntity<Object> handleGenericException(Exception e, Object item) {
+        return ResponseEntity.internalServerError().body(item);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<Object> handleResourceNotFoundException(NotFoundException e, Object item) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(item);
     }
 }

@@ -1,51 +1,57 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.repository.UserRepository;
 
-
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class UserService {
-    private final UserStorage userStorage;
+    ValidateService validateService;
+    UserRepository userRepository;
+
+    public Collection<User> getAllUsers() {
+        return userRepository.getUsers();
+    }
 
     public User addUser(User user) {
-        return userStorage.addUser(user);
+        validateService.validateUser(user);
+        return userRepository.addUser(user);
     }
 
     public User updateUser(User user) {
-        return userStorage.updateUser(user);
+        validateService.validateUser(user);
+        userRepository.getUser(user.getId())
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        return userRepository.updateUser(user);
     }
 
-    public List<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public User getUser(long id) {
+        return userRepository.getUser(id)
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
 
-    public User getUserById(int id) {
-        return userStorage.getUserById(id);
+    public List<User> getFriends(long id) {
+        return userRepository.getFriends(getUser(id));
     }
 
-    public void deleteUser(int id) {
-        userStorage.deleteUser(id);
+    public void addFriend(long id, long friendId) {
+        userRepository.addFriend(getUser(id), getUser(friendId));
     }
 
-    public void addFriend(int userId, int friendId) {
-        userStorage.addFriend(userId, friendId);
+    public void removeFriend(long id, long friendId) {
+        userRepository.deleteFriend(getUser(id), getUser(friendId));
     }
 
-    public void removeFriend(int userId, int friendId) {
-        userStorage.removeFriend(userId,friendId);
+    public List<User> getCommonFriends(long id, long otherId) {
+        return userRepository.getMutualFriends(getUser(id), getUser(otherId));
     }
-
-    public List<User> getFriends(int userId) {
-        return userStorage.getFriends(userId);
-    }
-
 }
